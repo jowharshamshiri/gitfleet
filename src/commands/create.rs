@@ -15,7 +15,7 @@ pub fn execute<P: AsRef<Path>>(
     let gitmodules = GitModules::parse(&repo_root)?;
 
     Formatter::print_info(&format!(
-        "Creating branch '{}' in {} submodule(s){}",
+        "Creating branch '{}' in superproject + {} submodule(s){}",
         branch,
         gitmodules.submodules.len(),
         if let Some(from) = from_branch {
@@ -32,6 +32,69 @@ pub fn execute<P: AsRef<Path>>(
     let mut successful = 0;
     let mut failed = 0;
     let mut skipped = 0;
+
+    // Create branch in superproject first
+    if verbose {
+        Formatter::print_submodule_header("[SUPERPROJECT]");
+    }
+
+    let super_repo = GitOps::open_repo(&repo_root)?;
+    let super_branch_exists = GitOps::branch_exists(&super_repo, branch)?;
+
+    if super_branch_exists {
+        Formatter::print_warning(&format!(
+            "Branch '{}' already exists in superproject, skipping creation",
+            branch
+        ));
+        skipped += 1;
+    } else {
+        if !dry_run {
+            use std::process::Command;
+            let mut cmd = Command::new("git");
+            cmd.arg("checkout").arg("-b").arg(branch);
+            if let Some(from) = from_branch {
+                cmd.arg(from);
+            }
+            cmd.current_dir(&repo_root);
+
+            let output = cmd.output()?;
+            if !output.status.success() {
+                Formatter::print_error(&format!(
+                    "Failed to create branch '{}' in superproject: {}",
+                    branch,
+                    String::from_utf8_lossy(&output.stderr)
+                ));
+                return Err(SuperGitError::Other("Superproject branch creation failed".to_string()));
+            }
+
+            Formatter::print_success(&format!("Created branch '{}' in superproject", branch));
+            successful += 1;
+
+            // Push if requested
+            if push {
+                let push_output = Command::new("git")
+                    .arg("push")
+                    .arg("--set-upstream")
+                    .arg("origin")
+                    .arg(branch)
+                    .current_dir(&repo_root)
+                    .output()?;
+
+                if push_output.status.success() {
+                    Formatter::print_success(&format!("Pushed '{}' in superproject", branch));
+                } else {
+                    Formatter::print_error(&format!(
+                        "Failed to push '{}' in superproject: {}",
+                        branch,
+                        String::from_utf8_lossy(&push_output.stderr)
+                    ));
+                }
+            }
+        } else {
+            Formatter::print_info(&format!("Would create branch '{}'", branch));
+            successful += 1;
+        }
+    }
 
     for submodule in &gitmodules.submodules {
         if verbose {

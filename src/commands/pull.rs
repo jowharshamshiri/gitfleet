@@ -13,7 +13,7 @@ pub fn execute<P: AsRef<Path>>(
     let gitmodules = GitModules::parse(&repo_root)?;
 
     Formatter::print_info(&format!(
-        "Pulling latest changes in {} submodule(s){}",
+        "Pulling latest changes in superproject + {} submodule(s){}",
         gitmodules.submodules.len(),
         if rebase { " (with rebase)" } else { "" }
     ));
@@ -25,6 +25,43 @@ pub fn execute<P: AsRef<Path>>(
     let mut successful = 0;
     let mut failed = 0;
     let mut skipped = 0;
+
+    // Pull superproject first
+    if verbose {
+        Formatter::print_submodule_header("[SUPERPROJECT]");
+    }
+
+    if !dry_run {
+        use std::process::Command;
+
+        let mut cmd = Command::new("git");
+        cmd.arg("pull");
+        if rebase {
+            cmd.arg("--rebase");
+        }
+        cmd.current_dir(&repo_root);
+
+        let output = cmd.output()?;
+        if output.status.success() {
+            Formatter::print_success("Pulled latest changes in superproject");
+            successful += 1;
+        } else {
+            let err_str = String::from_utf8_lossy(&output.stderr);
+            if err_str.contains("CONFLICT") {
+                Formatter::print_error("Merge conflict in superproject. Resolve conflicts and try again.");
+                return Err(SuperGitError::MergeConflict("[SUPERPROJECT]".to_string()));
+            } else {
+                Formatter::print_error(&format!(
+                    "Failed to pull in superproject: {}",
+                    err_str
+                ));
+                failed += 1;
+            }
+        }
+    } else {
+        Formatter::print_info("Would pull latest changes");
+        successful += 1;
+    }
 
     for submodule in &gitmodules.submodules {
         if verbose {

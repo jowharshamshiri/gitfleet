@@ -15,7 +15,7 @@ pub fn execute<P: AsRef<Path>>(
     let gitmodules = GitModules::parse(&repo_root)?;
 
     Formatter::print_info(&format!(
-        "Committing changes in {} submodule(s)",
+        "Committing changes in superproject + {} submodule(s)",
         gitmodules.submodules.len()
     ));
 
@@ -135,12 +135,32 @@ pub fn execute<P: AsRef<Path>>(
                     .output()?;
 
                 if commit_output.status.success() {
-                    Formatter::print_success("Updated superproject");
+                    Formatter::print_success("Committed in superproject");
+
+                    // Push superproject if requested
+                    if push {
+                        let push_output = Command::new("git")
+                            .arg("push")
+                            .arg("--set-upstream")
+                            .arg("origin")
+                            .arg("HEAD")
+                            .current_dir(&repo_root)
+                            .output()?;
+
+                        if push_output.status.success() {
+                            Formatter::print_success("Pushed superproject");
+                        } else {
+                            Formatter::print_error(&format!(
+                                "Failed to push superproject: {}",
+                                String::from_utf8_lossy(&push_output.stderr)
+                            ));
+                        }
+                    }
                 } else {
                     let stderr = String::from_utf8_lossy(&commit_output.stderr);
                     if !stderr.contains("nothing to commit") {
                         Formatter::print_warning(&format!(
-                            "Failed to update superproject: {}",
+                            "Failed to commit in superproject: {}",
                             stderr
                         ));
                     }

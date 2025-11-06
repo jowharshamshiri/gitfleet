@@ -8,9 +8,31 @@ pub fn execute<P: AsRef<Path>>(repo_root: P, all: bool, _verbose: bool) -> Resul
     let gitmodules = GitModules::parse(&repo_root)?;
 
     Formatter::print_info(&format!(
-        "Listing branches for {} submodule(s)",
+        "Listing branches for superproject + {} submodule(s)",
         gitmodules.submodules.len()
     ));
+
+    // List branches for superproject first
+    let repo = match GitOps::open_repo(&repo_root) {
+        Ok(r) => r,
+        Err(e) => {
+            Formatter::print_error(&format!("Failed to open superproject: {}", e));
+            return Err(e);
+        }
+    };
+
+    let current_branch = GitOps::current_branch(&repo).ok();
+
+    let branches = if all {
+        let mut local = GitOps::get_local_branches(&repo).unwrap_or_default();
+        let remote = GitOps::get_remote_branches(&repo).unwrap_or_default();
+        local.extend(remote);
+        local
+    } else {
+        GitOps::get_local_branches(&repo).unwrap_or_default()
+    };
+
+    Formatter::print_branches("[SUPERPROJECT]", &branches, current_branch.as_deref());
 
     for submodule in &gitmodules.submodules {
         let submodule_path = repo_root.as_ref().join(&submodule.path);

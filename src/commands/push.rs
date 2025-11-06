@@ -13,7 +13,7 @@ pub fn execute<P: AsRef<Path>>(
     let gitmodules = GitModules::parse(&repo_root)?;
 
     Formatter::print_info(&format!(
-        "Pushing changes in {} submodule(s){}",
+        "Pushing changes in superproject + {} submodule(s){}",
         gitmodules.submodules.len(),
         if force_with_lease {
             " (with --force-with-lease)"
@@ -110,13 +110,48 @@ pub fn execute<P: AsRef<Path>>(
         }
     }
 
+    // Push superproject after submodules
     if !dry_run {
+        use std::process::Command;
+
+        if verbose {
+            Formatter::print_submodule_header("[SUPERPROJECT]");
+        }
+
+        let mut cmd = Command::new("git");
+        cmd.arg("push");
+        if force_with_lease {
+            cmd.arg("--force-with-lease");
+        }
+        cmd.arg("--set-upstream")
+            .arg("origin")
+            .arg("HEAD")
+            .current_dir(&repo_root);
+
+        let output = cmd.output()?;
+        if output.status.success() {
+            Formatter::print_success("Pushed superproject");
+            successful += 1;
+        } else {
+            let err_str = String::from_utf8_lossy(&output.stderr);
+            if err_str.contains("Everything up-to-date") || err_str.contains("up to date") {
+                Formatter::print_info("Superproject is up to date");
+                successful += 1;
+            } else {
+                Formatter::print_error(&format!(
+                    "Failed to push superproject: {}",
+                    err_str
+                ));
+                failed += 1;
+            }
+        }
+
         Formatter::print_summary(successful, failed, skipped);
     }
 
     if failed > 0 {
         return Err(SuperGitError::Other(format!(
-            "{} submodule(s) failed to push",
+            "{} repository/submodule(s) failed to push",
             failed
         )));
     }
