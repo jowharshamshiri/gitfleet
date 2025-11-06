@@ -15,7 +15,7 @@ pub fn execute<P: AsRef<Path>>(
     let gitmodules = GitModules::parse(&repo_root)?;
 
     Formatter::print_info(&format!(
-        "Checking out '{}' in {} submodule(s){}",
+        "Checking out '{}' in superproject + {} submodule(s){}",
         branch,
         gitmodules.submodules.len(),
         if create { " (creating if needed)" } else { "" }
@@ -28,6 +28,71 @@ pub fn execute<P: AsRef<Path>>(
     let mut successful = 0;
     let mut failed = 0;
     let mut skipped = 0;
+
+    // Checkout in superproject first
+    if verbose {
+        Formatter::print_submodule_header("[SUPERPROJECT]");
+    }
+
+    let super_repo = GitOps::open_repo(&repo_root)?;
+    let super_is_clean = GitOps::is_clean(&super_repo)?;
+
+    if !super_is_clean && !dry_run {
+        Formatter::print_warning("Superproject has uncommitted changes");
+        let should_continue = Confirm::new()
+            .with_prompt("Do you want to continue? (changes may be lost)")
+            .default(false)
+            .interact()
+            .unwrap_or(false);
+
+        if !should_continue {
+            return Err(SuperGitError::Cancelled);
+        }
+    }
+
+    let super_branch_exists = GitOps::branch_exists(&super_repo, branch)?;
+
+    if !super_branch_exists && !create {
+        Formatter::print_error(&format!(
+            "Branch '{}' does not exist in superproject. Use --create to create it.",
+            branch
+        ));
+        return Err(SuperGitError::Other("Branch does not exist in superproject".to_string()));
+    }
+
+    if !dry_run {
+        use std::process::Command;
+        let mut cmd = Command::new("git");
+        cmd.arg("checkout");
+        if !super_branch_exists && create {
+            cmd.arg("-b");
+        }
+        cmd.arg(branch).current_dir(&repo_root);
+
+        let output = cmd.output()?;
+        if !output.status.success() {
+            Formatter::print_error(&format!(
+                "Failed to checkout '{}' in superproject: {}",
+                branch,
+                String::from_utf8_lossy(&output.stderr)
+            ));
+            return Err(SuperGitError::Other("Superproject checkout failed".to_string()));
+        }
+
+        if super_branch_exists {
+            Formatter::print_success(&format!("Checked out '{}' in superproject", branch));
+        } else {
+            Formatter::print_success(&format!("Created and checked out '{}' in superproject", branch));
+        }
+        successful += 1;
+    } else {
+        if super_branch_exists {
+            Formatter::print_info(&format!("Would checkout '{}'", branch));
+        } else {
+            Formatter::print_info(&format!("Would create and checkout '{}'", branch));
+        }
+        successful += 1;
+    }
 
     for submodule in &gitmodules.submodules {
         if verbose {

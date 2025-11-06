@@ -9,7 +9,7 @@ pub fn execute<P: AsRef<Path> + Sync>(repo_root: P, all: bool, dry_run: bool, ve
     let gitmodules = GitModules::parse(&repo_root)?;
 
     Formatter::print_info(&format!(
-        "Fetching updates for {} submodule(s){}",
+        "Fetching updates for superproject + {} submodule(s){}",
         gitmodules.submodules.len(),
         if all { " (all remotes)" } else { "" }
     ));

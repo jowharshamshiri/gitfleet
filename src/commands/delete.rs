@@ -16,7 +16,7 @@ pub fn execute<P: AsRef<Path>>(
     let gitmodules = GitModules::parse(&repo_root)?;
 
     Formatter::print_info(&format!(
-        "Deleting branch '{}' from {} submodule(s){}",
+        "Deleting branch '{}' from superproject + {} submodule(s){}",
         branch,
         gitmodules.submodules.len(),
         if remote { " (including remote)" } else { "" }
