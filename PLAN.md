@@ -11,7 +11,7 @@ SuperGit is a Rust CLI tool that treats Git submodules as synchronized "superbra
 
 ## Commands
 
-### 1. `supergit status`
+### 1. `gitfleet status`
 Shows status of all submodules in a unified view.
 - Current branch for each submodule
 - Uncommitted changes
@@ -19,7 +19,7 @@ Shows status of all submodules in a unified view.
 - Detached HEAD warnings
 - Uninitialized submodules
 
-### 2. `supergit checkout <branch> [--create]`
+### 2. `gitfleet checkout <branch> [--create]`
 Checkout the same branch across all submodules.
 - Checks if branch exists in each submodule
 - Creates branch if `--create` flag is used
@@ -27,35 +27,35 @@ Checkout the same branch across all submodules.
 - Falls back gracefully if branch missing
 - Updates superproject to track new branch
 
-### 3. `supergit pull [--rebase]`
+### 3. `gitfleet pull [--rebase]`
 Pull latest changes for current branch in all submodules.
 - Fetches and pulls each submodule
 - Reports conflicts clearly
 - Option to rebase instead of merge
 - Skips submodules with uncommitted changes (with warning)
 
-### 4. `supergit push [--force-with-lease]`
+### 4. `gitfleet push [--force-with-lease]`
 Push current branch for all submodules.
 - Pushes each submodule's current branch
 - Handles authentication
 - Reports success/failure per submodule
 - Supports force-with-lease for safety
 
-### 5. `supergit create <branch> [--from <base-branch>]`
+### 5. `gitfleet create <branch> [--from <base-branch>]`
 Create new branch across all submodules.
 - Creates branch from current HEAD or specified base
 - Sets up tracking to origin
 - Updates .gitmodules branch field
 - Can push new branch immediately with `--push`
 
-### 6. `supergit commit -m "message" [--push]`
+### 6. `gitfleet commit -m "message" [--push]`
 Commit changes across all submodules.
 - Commits only submodules with changes
 - Uses same message for all
 - Updates superproject to reference new commits
 - Optionally pushes immediately
 
-### 7. `supergit sync`
+### 7. `gitfleet sync`
 Synchronize all submodules based on .gitmodules.
 - Reads branch field from .gitmodules for each submodule
 - Fetches all remotes
@@ -63,26 +63,26 @@ Synchronize all submodules based on .gitmodules.
 - Pulls latest changes
 - Initializes missing submodules
 
-### 8. `supergit delete <branch> [--remote]`
+### 8. `gitfleet delete <branch> [--remote]`
 Delete branch from all submodules.
 - Deletes local branch
 - Optionally deletes from remote with `--remote`
 - Safety check: prevents deleting current branch
 - Confirms before remote deletion
 
-### 9. `supergit fetch [--all]`
+### 9. `gitfleet fetch [--all]`
 Fetch updates for all submodules.
 - Fetches from origin by default
 - `--all` fetches from all remotes
 - Parallel execution for speed
 
-### 10. `supergit branch [--all]`
+### 10. `gitfleet branch [--all]`
 List branches across all submodules.
 - Shows current branch for each submodule
 - `--all` shows all branches including remotes
 - Highlights inconsistencies
 
-### 11. `supergit init`
+### 11. `gitfleet init`
 Initialize all submodules recursively.
 - Clones missing submodules
 - Updates existing ones
@@ -148,7 +148,7 @@ Initialize all submodules recursively.
 
 ### Module Structure
 ```
-supergit/
+gitfleet/
 ├── src/
 │   ├── main.rs              # CLI entry point
 │   ├── cli.rs               # Command-line parsing (clap)
@@ -241,7 +241,7 @@ supergit/
 
 ## Configuration
 
-### .supergit.toml (optional)
+### .gitfleet.toml (optional)
 ```toml
 [defaults]
 parallel = true

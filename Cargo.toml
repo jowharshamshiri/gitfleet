@@ -1,5 +1,5 @@
 [package]
-name = "supergit"
+name = "gitfleet"
 version = "0.1.0"
 edition = "2021"
 authors = ["SuperGit Contributors"]
@@ -7,7 +7,7 @@ description = "A Git submodule manager for synchronized superbranches"
 license = "MIT"
 
 [[bin]]
-name = "supergit"
+name = "gitfleet"
 path = "src/main.rs"
 
 [dependencies]

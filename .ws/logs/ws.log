@@ -1,0 +1,12 @@
+[2025-11-06 14:39:38.515 INFO  workspace::logging] Logging initialized: /Users/bahram/ws/prj/supergit/.ws/logs/ws.log
+[2025-11-06 14:39:38.516 INFO  workspace::logging] Logging initialized: /Users/bahram/ws/prj/supergit/.ws/logs/ws.log
+[2025-11-06 14:39:38.516 DEBUG workspace::logging] Debug logging enabled, console level: Warn
+[2025-11-06 14:39:38.516 DEBUG workspace::logging] Debug logging enabled, console level: Warn
+[2025-11-06 14:39:38.516 INFO  workspace::logging] Workspace v0.62.182680
+[2025-11-06 14:39:38.516 INFO  workspace::logging] Workspace v0.62.182680
+[2025-11-06 14:39:38.516 INFO  ws] Starting workspace tool suite
+[2025-11-06 14:39:38.524 INFO  workspace::logging] Starting refactor: root: "."
+[2025-11-06 14:39:38.524 INFO  workspace::logging] Starting refactor: root: "."
+[2025-11-06 14:39:40.081 INFO  workspace::logging] Completed refactor in 1.56s
+[2025-11-06 14:39:40.081 INFO  workspace::logging] Completed refactor in 1.56s
+[2025-11-06 14:39:40.081 INFO  ws] Workspace tool completed successfully

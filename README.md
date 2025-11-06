@@ -19,16 +19,16 @@ SuperGit executes Git commands (checkout, pull, push, commit, etc.) across all s
 ### From Source
 
 ```bash
-git clone https://github.com/yourusername/supergit.git
-cd supergit
+git clone https://github.com/yourusername/gitfleet.git
+cd gitfleet
 cargo build --release
-sudo cp target/release/supergit /usr/local/bin/
+sudo cp target/release/gitfleet /usr/local/bin/
 ```
 
 ### Verify Installation
 
 ```bash
-supergit --version
+gitfleet --version
 ```
 
 ## Quick Start
@@ -36,19 +36,19 @@ supergit --version
 ### 1. Initialize Your Submodules
 
 ```bash
-supergit init
+gitfleet init
 ```
 
 ### 2. Check Status Across All Submodules
 
 ```bash
-supergit status
+gitfleet status
 ```
 
 ### 3. Create a New "Superbranch"
 
 ```bash
-supergit create feature-x
+gitfleet create feature-x
 ```
 
 This creates the `feature-x` branch in all submodules and checks it out.
@@ -57,23 +57,23 @@ This creates the `feature-x` branch in all submodules and checks it out.
 
 ```bash
 # Make your changes in various submodules
-supergit commit -m "Implement feature X"
+gitfleet commit -m "Implement feature X"
 ```
 
 ### 5. Push Everything
 
 ```bash
-supergit push
+gitfleet push
 ```
 
 ## Commands
 
-### `supergit status`
+### `gitfleet status`
 
 Shows the status of all submodules in a unified view.
 
 ```bash
-supergit status
+gitfleet status
 ```
 
 **Output:**
@@ -83,13 +83,13 @@ supergit status
 - Detached HEAD warnings
 - Uninitialized submodules
 
-### `supergit checkout <branch>`
+### `gitfleet checkout <branch>`
 
 Checkout the same branch across all submodules.
 
 ```bash
-supergit checkout main
-supergit checkout -c feature-new  # Create and checkout new branch
+gitfleet checkout main
+gitfleet checkout -c feature-new  # Create and checkout new branch
 ```
 
 **Options:**
@@ -100,13 +100,13 @@ supergit checkout -c feature-new  # Create and checkout new branch
 - Interactive prompts for safety
 - Skips uninitialized submodules with warnings
 
-### `supergit create <branch>`
+### `gitfleet create <branch>`
 
 Create a new branch across all submodules.
 
 ```bash
-supergit create feature-auth
-supergit create feature-auth --from main --push
+gitfleet create feature-auth
+gitfleet create feature-auth --from main --push
 ```
 
 **Options:**
@@ -118,13 +118,13 @@ supergit create feature-auth --from main --push
 - Can create from a specific base branch
 - Optionally pushes to remote immediately
 
-### `supergit pull`
+### `gitfleet pull`
 
 Pull latest changes for the current branch in all submodules.
 
 ```bash
-supergit pull
-supergit pull --rebase
+gitfleet pull
+gitfleet pull --rebase
 ```
 
 **Options:**
@@ -135,13 +135,13 @@ supergit pull --rebase
 - Detects and reports merge conflicts
 - Skips detached HEAD states
 
-### `supergit push`
+### `gitfleet push`
 
 Push current branch for all submodules.
 
 ```bash
-supergit push
-supergit push --force-with-lease
+gitfleet push
+gitfleet push --force-with-lease
 ```
 
 **Options:**
@@ -152,13 +152,13 @@ supergit push --force-with-lease
 - Reports success/failure per submodule
 - Skips detached HEAD states
 
-### `supergit commit`
+### `gitfleet commit`
 
 Commit changes across all submodules with the same message.
 
 ```bash
-supergit commit -m "Fix authentication bug"
-supergit commit -m "Add new feature" --push
+gitfleet commit -m "Fix authentication bug"
+gitfleet commit -m "Add new feature" --push
 ```
 
 **Options:**
@@ -170,13 +170,13 @@ supergit commit -m "Add new feature" --push
 - Automatically updates superproject
 - Can push immediately after committing
 
-### `supergit sync`
+### `gitfleet sync`
 
 Synchronize all submodules based on `.gitmodules` branch declarations.
 
 ```bash
-supergit sync
-supergit sync --init --recursive
+gitfleet sync
+gitfleet sync --init --recursive
 ```
 
 **Options:**
@@ -188,13 +188,13 @@ supergit sync --init --recursive
 - Fetches, checks out, and pulls in one operation
 - Can initialize uninitialized submodules
 
-### `supergit delete <branch>`
+### `gitfleet delete <branch>`
 
 Delete a branch from all submodules.
 
 ```bash
-supergit delete old-feature
-supergit delete old-feature --remote --force
+gitfleet delete old-feature
+gitfleet delete old-feature --remote --force
 ```
 
 **Options:**
@@ -206,13 +206,13 @@ supergit delete old-feature --remote --force
 - Interactive confirmation for remote deletion
 - Skips submodules that don't have the branch
 
-### `supergit fetch`
+### `gitfleet fetch`
 
 Fetch updates for all submodules.
 
 ```bash
-supergit fetch
-supergit fetch --all
+gitfleet fetch
+gitfleet fetch --all
 ```
 
 **Options:**
@@ -222,13 +222,13 @@ supergit fetch --all
 - Parallel execution for speed
 - Reports failures per submodule
 
-### `supergit branch`
+### `gitfleet branch`
 
 List branches across all submodules.
 
 ```bash
-supergit branch
-supergit branch --all
+gitfleet branch
+gitfleet branch --all
 ```
 
 **Options:**
@@ -238,13 +238,13 @@ supergit branch --all
 - Highlights current branch
 - Shows branch consistency across submodules
 
-### `supergit init`
+### `gitfleet init`
 
 Initialize all submodules.
 
 ```bash
-supergit init
-supergit init --recursive
+gitfleet init
+gitfleet init --recursive
 ```
 
 **Options:**
@@ -269,42 +269,42 @@ git clone https://github.com/your/project.git
 cd project
 
 # Initialize and sync all submodules
-supergit init
-supergit sync
+gitfleet init
+gitfleet sync
 ```
 
 ### Starting a New Feature
 
 ```bash
 # Create feature branch across all submodules
-supergit create feature-new-ui --from main
+gitfleet create feature-new-ui --from main
 
 # Check status
-supergit status
+gitfleet status
 
 # Make your changes...
 
 # Commit and push
-supergit commit -m "Add new UI components" --push
+gitfleet commit -m "Add new UI components" --push
 ```
 
 ### Daily Development
 
 ```bash
 # Start of day: sync with team
-supergit pull
+gitfleet pull
 
 # Check what changed
-supergit status
+gitfleet status
 
 # Switch to feature branch
-supergit checkout feature-analytics
+gitfleet checkout feature-analytics
 
 # Make changes, commit frequently
-supergit commit -m "WIP: analytics dashboard"
+gitfleet commit -m "WIP: analytics dashboard"
 
 # End of day: push your work
-supergit push
+gitfleet push
 ```
 
 ### Keeping Branches in Sync
@@ -317,23 +317,23 @@ supergit push
 #   branch = dev
 
 # Sync all submodules to their declared branches
-supergit sync --init
+gitfleet sync --init
 ```
 
 ### Code Review Workflow
 
 ```bash
 # Fetch latest from all remotes
-supergit fetch
+gitfleet fetch
 
 # Check out review branch
-supergit checkout review/pr-123
+gitfleet checkout review/pr-123
 
 # Review, make changes if needed
-supergit commit -m "Address review comments"
+gitfleet commit -m "Address review comments"
 
 # Push changes
-supergit push
+gitfleet push
 ```
 
 ## Configuration
@@ -354,7 +354,7 @@ SuperGit uses the `branch` field in `.gitmodules` to determine which branch each
     branch = develop
 ```
 
-Use `supergit sync` to checkout and pull the specified branches.
+Use `gitfleet sync` to checkout and pull the specified branches.
 
 ## Edge Cases and Error Handling
 
@@ -394,18 +394,18 @@ SuperGit handles many common edge cases gracefully:
 
 1. **Dry-Run Mode**: Test operations without making changes
    ```bash
-   supergit checkout feature-x --dry-run
+   gitfleet checkout feature-x --dry-run
    ```
 
 2. **Interactive Prompts**: Confirmation for destructive operations
    ```bash
-   supergit delete old-branch --remote
+   gitfleet delete old-branch --remote
    # Prompts: "Are you sure you want to delete 'old-branch' from remote?"
    ```
 
 3. **Force Flags Required**: Dangerous operations need explicit flags
    ```bash
-   supergit push --force-with-lease
+   gitfleet push --force-with-lease
    ```
 
 4. **Clear Error Messages**: Every error includes suggested fixes
@@ -417,14 +417,14 @@ SuperGit handles many common edge cases gracefully:
 
 ### "No submodules found in .gitmodules"
 
-Ensure you're running supergit from the repository root and that `.gitmodules` exists.
+Ensure you're running gitfleet from the repository root and that `.gitmodules` exists.
 
 ### "Submodule has uncommitted changes"
 
 Commit or stash your changes before switching branches:
 ```bash
 git stash  # in the submodule
-supergit checkout other-branch
+gitfleet checkout other-branch
 ```
 
 ### "Failed to push in '<submodule>': authentication failed"
@@ -436,9 +436,9 @@ ssh -T git@github.com  # Test GitHub SSH
 
 ### Mixed branch states
 
-Use `supergit status` to see which submodules are on different branches, then:
+Use `gitfleet status` to see which submodules are on different branches, then:
 ```bash
-supergit checkout main  # Align all to main
+gitfleet checkout main  # Align all to main
 ```
 
 ## Performance

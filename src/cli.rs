@@ -1,7 +1,7 @@
 use clap::{Parser, Subcommand};
 
 #[derive(Parser)]
-#[command(name = "supergit")]
+#[command(name = "gitfleet")]
 #[command(about = "A Git submodule manager for synchronized superbranches", long_about = None)]
 #[command(version)]
 pub struct Cli {
